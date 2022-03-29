@@ -29,7 +29,7 @@ random.json: contracts/main.jsligo
 
 clean:
 	@echo "Removing Michelson files"
-	@rm compiled/*.tz compiled/*.json
+	@rm -f compiled/*.tz compiled/*.json
 
 test: test_ligo test_ligo_bytes
 
