@@ -14,7 +14,8 @@ let test_one_complete_cycle = () : unit => {
         result_nat:(None() as option<nat>),
         last_seed:init_seed,
         max:(1000 as nat),
-        min:(100 as nat)
+        min:(100 as nat),
+        metadata: (Big_map.empty as big_map<string, bytes>)
     };
     // originate Random smart contract
     const [addr,_,_] = Test.originate(Random.main, init_storage, (0 as tez));
@@ -104,7 +105,8 @@ let test_roll_dices = () : unit => {
         result_nat:(None() as option<nat>),
         last_seed:init_seed,
         max:(1000 as nat),
-        min:(1 as nat)
+        min:(1 as nat),
+        metadata: (Big_map.empty as big_map<string, bytes>)
     };
     // originate Random smart contract
     const [addr,_,_] = Test.originate(Random.main, init_storage, (0 as tez));

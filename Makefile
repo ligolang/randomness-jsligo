@@ -1,5 +1,4 @@
-ligo_compiler=docker run --rm -v "$$PWD":"$$PWD" -w "$$PWD" ligolang/ligo:next
-# ligo_compiler=../../../ligo
+ligo_compiler=docker run --rm -v "$$PWD":"$$PWD" -w "$$PWD" ligolang/ligo:0.41.0
 PROJECTROOT_OPT=--project-root .
 PROTOCOL_OPT=--protocol ithaca
 JSON_OPT=--michelson-format json

@@ -11,7 +11,8 @@ export namespace Types {
         result_nat : option<nat>,
         last_seed : nat,
         max : nat,
-        min: nat
+        min: nat,
+        metadata: big_map<string, bytes>
     };
 };
 
