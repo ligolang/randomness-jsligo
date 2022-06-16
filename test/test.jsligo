@@ -1,7 +1,7 @@
 #import "../contracts/main.jsligo" "Random"
 
 
-let test_one_complete_cycle = () : unit => {
+const test_one_complete_cycle = () : unit => {
     const alice: address = Test.nth_bootstrap_account(0);
     const bob: address = Test.nth_bootstrap_account(1);
 
@@ -19,7 +19,7 @@ let test_one_complete_cycle = () : unit => {
     };
     // originate Random smart contract
     const [addr,_,_] = Test.originate(Random.main, init_storage, (0 as tez));
-    let s_init = Test.get_storage(addr);
+    let _s_init = Test.get_storage(addr);
     //let _ = Test.log(s_init);
 
     let _test_full_cycle_commit_reveal_should_works = () : string => {
@@ -47,7 +47,7 @@ let test_one_complete_cycle = () : unit => {
         let s : Random.storage = Test.get_storage(addr);
         let response : bool = match (Map.find_opt(alice, s.secrets), {
             None: () => false,
-            Some: (x: chest) => true
+            Some: (_x: chest) => true
         });
         //let _ = Test.log(s);
         let _ = assert (response);
@@ -64,7 +64,7 @@ let test_one_complete_cycle = () : unit => {
         let s3 : Random.storage = Test.get_storage(addr);
         let response2 : bool = match (Map.find_opt(bob, s3.secrets), {
             None: () => false,
-            Some: (x: chest) => true
+            Some: (_x: chest) => true
         });
         //let _ = Test.log(s3);
         let _ = assert (response2);
@@ -93,7 +93,7 @@ let test_one_complete_cycle = () : unit => {
     const _test = _test_full_cycle_commit_reveal_should_works();
 };
 
-let test_roll_dices = () : unit => {
+const test_roll_dices = () : unit => {
     const alice: address = Test.nth_bootstrap_account(0);
     const bob: address = Test.nth_bootstrap_account(1);
     let init_seed : nat = (3268854739249 as nat);
@@ -110,7 +110,7 @@ let test_roll_dices = () : unit => {
     };
     // originate Random smart contract
     const [addr,_,_] = Test.originate(Random.main, init_storage, (0 as tez));
-    let s_init = Test.get_storage(addr);
+    let _s_init = Test.get_storage(addr);
     //let _ = Test.log(s_init);
 
 

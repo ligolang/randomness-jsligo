@@ -9,7 +9,7 @@ export type return_ = [list<operation>, storage];
 
 
 // Sender commits its chest
-let commit = ([p, st] : [Parameter.Types.commit_param, storage]) : [list<operation>, storage] => {
+const commit = ([p, st] : [Parameter.Types.commit_param, storage]) : [list<operation>, storage] => {
     let _check_authorized : unit = assert_with_error(Set.mem(Tezos.get_sender(), st.participants), Errors.not_authorized);
     let _check_amount : unit = assert_with_error( (Tezos.get_amount() >= (10 as mutez)), Errors.commit_expects_10_mutez_lock);
     let new_secrets = match (Map.find_opt(Tezos.get_sender(), st.secrets), {
@@ -24,7 +24,7 @@ let commit = ([p, st] : [Parameter.Types.commit_param, storage]) : [list<operati
 };
         
 // Sender reveals its chest content
-let reveal = ([p, s] : [Parameter.Types.reveal_param, storage]) : [list<operation>, storage] => {
+const reveal = ([p, s] : [Parameter.Types.reveal_param, storage]) : [list<operation>, storage] => {
     let sender_address : address = Tezos.get_sender();
     let _check_amount : unit = assert_with_error( (Tezos.get_amount() == (0 as mutez)), Errors.reveal_expects_0_mutez_lock);
     let _check_authorized : unit = assert_with_error( (Set.mem(sender_address, s.participants)), Errors.not_authorized);
@@ -89,7 +89,7 @@ let reveal = ([p, s] : [Parameter.Types.reveal_param, storage]) : [list<operatio
     return [(list([]) as list<operation>), s];
 };
     
-let reset = ([param, store] : [Parameter.Types.reset_param, storage]) : [list<operation>, storage] => {
+const reset = ([param, store] : [Parameter.Types.reset_param, storage]) : [list<operation>, storage] => {
     // clean secrets_chest and decoded_payloads
     let _check_amount : unit = assert_with_error( (Tezos.get_amount() == (0 as mutez)), Errors.reset_expects_0_mutez_lock);
     return [(list([]) as list<operation>), { ...store,  

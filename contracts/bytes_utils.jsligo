@@ -2,13 +2,13 @@ export namespace Utils {
 
    
 
-    let power = ([x, y] : [nat, nat]) : nat => {
+    const power = ([x, y] : [nat, nat]) : nat => {
         let multiply = ([acc, elt, last]: [nat, nat, nat] ) : nat => { if (last == (0 as nat)) { return acc } else { return multiply(acc * elt, elt, abs(last - (1 as nat))) } };
         return multiply((1 as nat), x, y)
     };
         
 
-    let hexa_to_nat = (hexa : bytes) : nat => {
+    const hexa_to_nat = (hexa : bytes) : nat => {
         let _check_size : unit = assert_with_error( (Bytes.length(hexa) == (1 as nat)), "Can only convert 1 byte");
         let result : nat = (0 as nat);
         switch (hexa) {
@@ -274,7 +274,7 @@ export namespace Utils {
         return result;
     };
 
-    export let bytes_to_nat = (payload : bytes) : nat => {
+    export const bytes_to_nat = (payload : bytes) : nat => {
         let convert_to_nat = ([acc, indice, payload] : [nat, nat, bytes]) : nat => {
             if (indice == (1 as nat)) {
                 return acc + hexa_to_nat(payload)
