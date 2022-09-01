@@ -6,12 +6,11 @@ import * as dotenv from 'dotenv'
 dotenv.config(({path:__dirname+'/.env'}))
 
 const rpc = process.env.RPC; //"http://127.0.0.1:8732"
+console.log(rpc)
 const pk: string = process.env.ADMIN_PK || undefined;
 const Tezos = new TezosToolkit(rpc);
-const signer = new InMemorySigner(pk);
-Tezos.setProvider({ signer: signer })
 
-const admin = process.env.ADMIN_ADDRESS;
+
 let random_address = process.env.RANDOM_CONTRACT_ADDRESS || undefined;
 const result = undefined
 const init_seed = 3268854739249
@@ -27,6 +26,7 @@ const participants: Array<string> = [
 async function orig() {
 
     let random_store = {
+        'metadata' : new MichelsonMap(),
         'participants' : participants,
         'locked_tez' : new MichelsonMap(),
         'secrets' : new MichelsonMap(),
@@ -39,6 +39,12 @@ async function orig() {
 
     try {
         // Originate an Random contract
+        const signer = await InMemorySigner.fromSecretKey(
+            pk
+        );
+
+        Tezos.setProvider({ signer: signer })
+
         if (random_address === undefined) {
             const random_originated = await Tezos.contract.originate({
                 code: random,
@@ -55,6 +61,7 @@ async function orig() {
 
     } catch (error: any) {
         console.log(error)
+        return process.exit(1)
     }
 }
 
