@@ -7,8 +7,8 @@
     "test": "tests"
   },
   "dependencies": {
-    "@taquito/signer": "^11.2.0",
-    "@taquito/taquito": "^11.2.0",
+    "@taquito/signer": "^12.0.0",
+    "@taquito/taquito": "^12.0.0",
     "dotenv": "^10.0.0"
   },
   "devDependencies": {
