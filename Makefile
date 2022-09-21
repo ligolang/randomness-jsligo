@@ -1,4 +1,6 @@
-ligo_compiler=docker run --rm -v "$$PWD":"$$PWD" -w "$$PWD" ligolang/ligo:stable
+ligo_compiler=docker run --rm -v "$(PWD)":"$(PWD)" -w "$(PWD)" ligolang/ligo:stable
+# ^ Override this variable when you run make command by make <COMMAND> ligo_compiler=<LIGO_EXECUTABLE>
+# ^ Otherwise use default one (you'll need docker)
 PROJECTROOT_OPT=--project-root .
 PROTOCOL_OPT=
 JSON_OPT=--michelson-format json
@@ -34,11 +36,11 @@ clean:
 
 test: test_ligo test_ligo_bytes
 
-test_ligo: test/test.jsligo 
+test_ligo: test/test.jsligo
 	@echo "Running integration tests"
 	@$(ligo_compiler) run test $^ $(PROTOCOL_OPT)
 
-test_ligo_bytes: test/test_bytes.jsligo 
+test_ligo_bytes: test/test_bytes.jsligo
 	@echo "Running integration tests (bytes conversion)"
 	@$(ligo_compiler) run test $^ $(PROTOCOL_OPT)
 
@@ -46,7 +48,7 @@ deploy: node_modules deploy.js
 	@echo "Deploying contract"
 	@node deploy/deploy.js
 
-deploy.js: 
+deploy.js:
 	@cd deploy && $(tsc) deploy.ts --resolveJsonModule -esModuleInterop
 
 node_modules:
