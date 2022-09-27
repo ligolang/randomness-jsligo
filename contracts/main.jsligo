@@ -86,7 +86,6 @@ const reveal = ([p, s] : [Parameter.Types.reveal_param, storage]) : [list<operat
     } else {
         return [(list([op]) as list<operation>), { ...s, decoded_payloads:new_decoded_payloads, locked_tez:new_locked }]
     }
-    return [(list([]) as list<operation>), s];
 };
     
 const reset = ([param, store] : [Parameter.Types.reset_param, storage]) : [list<operation>, storage] => {
