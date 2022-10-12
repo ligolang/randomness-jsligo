@@ -3,7 +3,7 @@ ligo_compiler?=docker run --rm -v "$(PWD)":"$(PWD)" -w "$(PWD)" ligolang/ligo:st
 # ^ Otherwise use default one (you'll need docker)
 PROJECTROOT_OPT=--project-root .
 protocol_opt?=
-JSON_OPT?=--michelson-format json
+json_opt?=--michelson-format json
 tsc=npx tsc
 help:
 	@echo  'Usage:'
@@ -28,7 +28,7 @@ random.tz: contracts/main.jsligo
 random.json: contracts/main.jsligo
 	@if [ ! -d ./compiled ]; then mkdir ./compiled ; fi
 	@echo "Compiling smart contract to Michelson in JSON format"
-	@$(ligo_compiler) compile contract $^ $(JSON_OPT) -e main $(protocol_opt) $(PROJECTROOT_OPT) > compiled/$@
+	@$(ligo_compiler) compile contract $^ $(json_opt) -e main $(protocol_opt) $(PROJECTROOT_OPT) > compiled/$@
 
 clean:
 	@echo "Removing Michelson files"
