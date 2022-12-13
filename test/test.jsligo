@@ -1,5 +1,7 @@
 #import "../contracts/main.jsligo" "Random"
 
+const create_bytes = (payload: bytes, time_secret: nat): [bytes,bytes] => 
+    [ Crypto.sha512(Bytes.pack(payload, time_secret)), payload ];
 
 const test_one_complete_cycle = () : unit => {
     const alice: address = Test.nth_bootstrap_account(0);
@@ -9,7 +11,7 @@ const test_one_complete_cycle = () : unit => {
     let init_storage : Random.Storage.Types.t = { 
         participants: Set.add(alice, (Set.add(bob, (Set.empty as set<address>)))),
         locked_tez:(Map.empty as map<address, tez>),
-        secrets:(Map.empty as map<address, chest>),
+        secrets:(Map.empty as map<address, bytes>),
         decoded_payloads:(Map.empty as map<address, bytes>),
         result_nat:(None() as option<nat>),
         last_seed:init_seed,
@@ -26,28 +28,28 @@ const test_one_complete_cycle = () : unit => {
     
         let payload : bytes = 0x0a;
         let time_secret : nat = (10 as nat); 
-        let [my_chest,chest_key] = Test.create_chest(payload, time_secret);
+        let [my_bytes,bytes_key] = create_bytes(payload, time_secret);
 
         let payload2 : bytes = 0x0b;
         let time_secret2 : nat = (99 as nat); 
-        let [my_chest2,chest_key2] = Test.create_chest(payload2,time_secret2);
+        let [my_bytes2,bytes_key2] = create_bytes(payload2,time_secret2);
 
-        //let _ = Test.log("chests created");
+        //let _ = Test.log("bytess created");
 
         let x : contract<Random.parameter> = Test.to_contract(addr);
 
         // alice commits
         //let _ = Test.log("alice commits");
         let _ = Test.set_source(alice);
-        let commit_args : Random.Parameter.Types.commit_param = { secret_action:my_chest };
+        let commit_args : Random.Parameter.Types.commit_param = { secret_action:my_bytes };
         //let _ = Test.log(commit_args);
         let _ = Test.transfer_to_contract_exn(x, (Commit(commit_args)), (10 as mutez));
 
-        //let _ = Test.log("check alice chest");
+        //let _ = Test.log("check alice bytes");
         let s : Random.storage = Test.get_storage(addr);
         let response : bool = match (Map.find_opt(alice, s.secrets), {
             None: () => false,
-            Some: (_x: chest) => true
+            Some: (_x: bytes) => true
         });
         //let _ = Test.log(s);
         let _ = assert (response);
@@ -56,15 +58,15 @@ const test_one_complete_cycle = () : unit => {
         // bob commits
         //let _ = Test.log("bob commits");
         let _ = Test.set_source(bob);
-        let commit_args2 : Random.Parameter.Types.commit_param = { secret_action:my_chest2 };
+        let commit_args2 : Random.Parameter.Types.commit_param = { secret_action:my_bytes2 };
         //let _ = Test.log(commit_args);
         let _ = Test.transfer_to_contract_exn(x, (Commit(commit_args2)), (10 as mutez));
 
-        //let _ = Test.log("check bob chest");
+        //let _ = Test.log("check bob bytes");
         let s3 : Random.storage = Test.get_storage(addr);
         let response2 : bool = match (Map.find_opt(bob, s3.secrets), {
             None: () => false,
-            Some: (_x: chest) => true
+            Some: (_x: bytes) => true
         });
         //let _ = Test.log(s3);
         let _ = assert (response2);
@@ -72,14 +74,14 @@ const test_one_complete_cycle = () : unit => {
         // alice reveals
         //let _ = Test.log("alice reveals");
         let _ = Test.set_source(alice);
-        let reveal_args : Random.Parameter.Types.reveal_param = [chest_key, time_secret];
+        let reveal_args : Random.Parameter.Types.reveal_param = [bytes_key, time_secret];
         //let _ = Test.log(reveal_args);
         let _ = Test.transfer_to_contract_exn(x, (Reveal(reveal_args)), (0 as mutez));
 
         // bob reveals
         //let _ = Test.log("bob reveals");
         let _ = Test.set_source(bob);
-        let reveal_args2 : Random.Parameter.Types.reveal_param = [chest_key2, time_secret2];
+        let reveal_args2 : Random.Parameter.Types.reveal_param = [bytes_key2, time_secret2];
         let _ = Test.transfer_to_contract_exn(x, (Reveal(reveal_args2)), (0 as mutez));
         
         //let _ = Test.log("check storage");
@@ -100,7 +102,7 @@ const test_roll_dices = () : unit => {
     let init_storage : Random.Storage.Types.t = { 
         participants: Set.add(alice, (Set.add(bob, (Set.empty as set<address>)))),
         locked_tez:(Map.empty as map<address, tez>),
-        secrets:(Map.empty as map<address, chest>),
+        secrets:(Map.empty as map<address, bytes>),
         decoded_payloads:(Map.empty as map<address, bytes>),
         result_nat:(None() as option<nat>),
         last_seed:init_seed,
@@ -118,38 +120,38 @@ const test_roll_dices = () : unit => {
     
         let payload : bytes = 0x0a1234;
         let time_secret : nat = (10 as nat); 
-        let [my_chest,chest_key] = Test.create_chest(payload, time_secret);
+        let [my_bytes,bytes_key] = create_bytes(payload, time_secret);
 
         let payload2 : bytes = 0x0b455469;
         let time_secret2 : nat = (84 as nat); 
-        let [my_chest2,chest_key2] = Test.create_chest(payload2, time_secret2);
+        let [my_bytes2,bytes_key2] = create_bytes(payload2, time_secret2);
 
-        //let _ = Test.log("chests created");
+        //let _ = Test.log("bytess created");
 
         let x : contract<Random.parameter> = Test.to_contract(addr);
 
         // alice commits
         //let _ = Test.log("alice commits");
         let _ = Test.set_source(alice);
-        let commit_args : Random.Parameter.Types.commit_param = {secret_action:my_chest};
+        let commit_args : Random.Parameter.Types.commit_param = {secret_action:my_bytes};
         let _ = Test.transfer_to_contract_exn(x, (Commit(commit_args)), (10 as mutez));
 
         // bob commits
         //let _ = Test.log("bob commits");
         let _ = Test.set_source(bob);
-        let commit_args2 : Random.Parameter.Types.commit_param = {secret_action:my_chest2};
+        let commit_args2 : Random.Parameter.Types.commit_param = {secret_action:my_bytes2};
         let _ = Test.transfer_to_contract_exn(x, (Commit(commit_args2)), (10 as mutez));
 
         // alice reveals
         //let _ = Test.log("alice reveals");
         let _ = Test.set_source(alice);
-        let reveal_args : Random.Parameter.Types.reveal_param = [chest_key, time_secret];
+        let reveal_args : Random.Parameter.Types.reveal_param = [bytes_key, time_secret];
         let _ = Test.transfer_to_contract_exn(x, (Reveal(reveal_args)), (0 as mutez));
 
         // bob reveals
         //let _ = Test.log("bob reveals");
         let _ = Test.set_source(bob);
-        let reveal_args2 : Random.Parameter.Types.reveal_param = [chest_key2, time_secret2];
+        let reveal_args2 : Random.Parameter.Types.reveal_param = [bytes_key2, time_secret2];
         let _ = Test.transfer_to_contract_exn(x, (Reveal(reveal_args2)), (0 as mutez));
         
         //let _ = Test.log("check storage");
@@ -163,13 +165,13 @@ const test_roll_dices = () : unit => {
     
         let payload : bytes = 0x0a1234;
         let time_secret : nat = (10 as nat); 
-        let [my_chest,chest_key] = Test.create_chest(payload, time_secret);
+        let [my_bytes,bytes_key] = create_bytes(payload, time_secret);
 
         let payload2 : bytes = 0x0b455469;
         let time_secret2 : nat = (84 as nat); 
-        let [my_chest2,chest_key2] = Test.create_chest(payload2, time_secret2);
+        let [my_bytes2,bytes_key2] = create_bytes(payload2, time_secret2);
 
-        //let _ = Test.log("chests created");
+        //let _ = Test.log("bytess created");
 
         let x : contract<Random.parameter> = Test.to_contract(addr);
 
@@ -186,25 +188,25 @@ const test_roll_dices = () : unit => {
         // alice commits
         //let _ = Test.log("alice commits");
         let _ = Test.set_source(alice);
-        let commit_args : Random.Parameter.Types.commit_param = {secret_action:my_chest};
+        let commit_args : Random.Parameter.Types.commit_param = {secret_action:my_bytes};
         let _ = Test.transfer_to_contract_exn(x, (Commit(commit_args)), (10 as mutez));
 
         // bob commits
         //let _ = Test.log("bob commits");
         let _ = Test.set_source(bob);
-        let commit_args2 : Random.Parameter.Types.commit_param = {secret_action:my_chest2};
+        let commit_args2 : Random.Parameter.Types.commit_param = {secret_action:my_bytes2};
         let _ = Test.transfer_to_contract_exn(x, (Commit(commit_args2)), (10 as mutez));
 
         // alice reveals
         //let _ = Test.log("alice reveals");
         let _ = Test.set_source(alice);
-        let reveal_args : Random.Parameter.Types.reveal_param = [chest_key, time_secret];
+        let reveal_args : Random.Parameter.Types.reveal_param = [bytes_key, time_secret];
         let _ = Test.transfer_to_contract_exn(x, (Reveal(reveal_args)), (0 as mutez));
 
         // bob reveals
         //let _ = Test.log("bob reveals");
         let _ = Test.set_source(bob);
-        let reveal_args2 : Random.Parameter.Types.reveal_param = [chest_key2, time_secret2];
+        let reveal_args2 : Random.Parameter.Types.reveal_param = [bytes_key2, time_secret2];
         let _ = Test.transfer_to_contract_exn(x, (Reveal(reveal_args2)), (0 as mutez));
         
         //let _ = Test.log("check storage");
@@ -222,13 +224,13 @@ const test_roll_dices = () : unit => {
     
         let payload : bytes = 0x0a1234;
         let time_secret : nat = (10 as nat); 
-        let [my_chest,chest_key] = Test.create_chest(payload, time_secret);
+        let [my_bytes,bytes_key] = create_bytes(payload, time_secret);
 
         let payload2 : bytes = 0x0b455469;
         let time_secret2 : nat = (84 as nat); 
-        let [my_chest2,chest_key2] = Test.create_chest(payload2, time_secret2);
+        let [my_bytes2,bytes_key2] = create_bytes(payload2, time_secret2);
 
-        //let _ = Test.log("chests created");
+        //let _ = Test.log("bytess created");
 
         let x : contract<Random.parameter> = Test.to_contract(addr);
 
@@ -246,25 +248,25 @@ const test_roll_dices = () : unit => {
         // alice commits
         //let _ = Test.log("alice commits");
         let _ = Test.set_source(alice);
-        let commit_args : Random.Parameter.Types.commit_param = {secret_action:my_chest};
+        let commit_args : Random.Parameter.Types.commit_param = {secret_action:my_bytes};
         let _ = Test.transfer_to_contract_exn(x, (Commit(commit_args)), (10 as mutez));
 
         // bob commits
         //let _ = Test.log("bob commits");
         let _ = Test.set_source(bob);
-        let commit_args2 : Random.Parameter.Types.commit_param = {secret_action:my_chest2};
+        let commit_args2 : Random.Parameter.Types.commit_param = {secret_action:my_bytes2};
         let _ = Test.transfer_to_contract_exn(x, (Commit(commit_args2)), (10 as mutez));
 
         // alice reveals
         //let _ = Test.log("alice reveals");
         let _ = Test.set_source(alice);
-        let reveal_args : Random.Parameter.Types.reveal_param = [chest_key, time_secret];
+        let reveal_args : Random.Parameter.Types.reveal_param = [bytes_key, time_secret];
         let _ = Test.transfer_to_contract_exn(x, (Reveal(reveal_args)), (0 as mutez));
 
         // bob reveals
         //let _ = Test.log("bob reveals");
         let _ = Test.set_source(bob);
-        let reveal_args2 : Random.Parameter.Types.reveal_param = [chest_key2, time_secret2];
+        let reveal_args2 : Random.Parameter.Types.reveal_param = [bytes_key2, time_secret2];
         let _ = Test.transfer_to_contract_exn(x, (Reveal(reveal_args2)), (0 as mutez));
         
         //let _ = Test.log("check storage");
@@ -282,13 +284,13 @@ const test_roll_dices = () : unit => {
     
         let payload : bytes = 0x0a1234;
         let time_secret : nat = (10 as nat); 
-        let [my_chest,chest_key] = Test.create_chest(payload, time_secret);
+        let [my_bytes,bytes_key] = create_bytes(payload, time_secret);
 
         let payload2 : bytes = 0x0b455469;
         let time_secret2 : nat = (84 as nat); 
-        let [my_chest2,chest_key2] = Test.create_chest(payload2, time_secret2);
+        let [my_bytes2,bytes_key2] = create_bytes(payload2, time_secret2);
 
-        //let _ = Test.log("chests created");
+        //let _ = Test.log("bytess created");
 
         let x : contract<Random.parameter> = Test.to_contract(addr);
 
@@ -305,25 +307,25 @@ const test_roll_dices = () : unit => {
         // alice commits
         //let _ = Test.log("alice commits");
         let _ = Test.set_source(alice);
-        let commit_args : Random.Parameter.Types.commit_param = {secret_action:my_chest};
+        let commit_args : Random.Parameter.Types.commit_param = {secret_action:my_bytes};
         let _ = Test.transfer_to_contract_exn(x, (Commit(commit_args)), (10 as mutez));
 
         // bob commits
         //let _ = Test.log("bob commits");
         let _ = Test.set_source(bob);
-        let commit_args2 : Random.Parameter.Types.commit_param = {secret_action:my_chest2};
+        let commit_args2 : Random.Parameter.Types.commit_param = {secret_action:my_bytes2};
         let _ = Test.transfer_to_contract_exn(x, (Commit(commit_args2)), (10 as mutez));
 
         // alice reveals
         //let _ = Test.log("alice reveals");
         let _ = Test.set_source(alice);
-        let reveal_args : Random.Parameter.Types.reveal_param = [chest_key, time_secret];
+        let reveal_args : Random.Parameter.Types.reveal_param = [bytes_key, time_secret];
         let _ = Test.transfer_to_contract_exn(x, (Reveal(reveal_args)), (0 as mutez));
 
         // bob reveals
         //let _ = Test.log("bob reveals");
         let _ = Test.set_source(bob);
-        let reveal_args2 : Random.Parameter.Types.reveal_param = [chest_key2, time_secret2];
+        let reveal_args2 : Random.Parameter.Types.reveal_param = [bytes_key2, time_secret2];
         let _ = Test.transfer_to_contract_exn(x, (Reveal(reveal_args2)), (0 as mutez));
         
         //let _ = Test.log("check storage");

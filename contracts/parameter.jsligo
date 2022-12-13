@@ -1,9 +1,9 @@
 export namespace Types {
     export type commit_param = {
-        secret_action : chest
+        secret_action : bytes
     };
 
-    export type reveal_param = [chest_key, nat];
+    export type reveal_param = [bytes, nat];
 
     export type reset_param = {
         min : nat,
