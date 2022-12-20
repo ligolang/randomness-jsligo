@@ -1,0 +1,19 @@
+{
+    "name": "randomness Example",
+    "description": "This smart contract implements an on-chain random number generator. The number generation is based on a random seed and a pseudo-random generator algorithm. In order to have an unbiased seed, users must perform a \"Commit & Reveal\" mechanism which is perfomed into two separated phases.",
+    "version": "1.0.0",
+    "license": {
+        "name": "MIT"
+    },
+    "authors": [
+        "smart-chain <tezos@smart-chain.fr>"
+    ],
+    "homepage": "https://github.com/ligolang/randomness-cameligo",
+    "source": {
+        "tools": "cameligo",
+        "location": "https://github.com/ligolang/randomness-cameligo"
+    },
+    "interfaces": [
+        "TZIP-016"
+    ]
+}

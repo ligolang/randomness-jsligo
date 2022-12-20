@@ -1,9 +1,6 @@
-SHELL := /bin/bash
-
 ligo_compiler?=docker run --rm -v "$(PWD)":"$(PWD)" -w "$(PWD)" ligolang/ligo:0.57.0
 # ^ Override this variable when you run make command by make <COMMAND> ligo_compiler=<LIGO_EXECUTABLE>
 # ^ Otherwise use default one (you'll need docker)
-PROJECTROOT_OPT=--project-root .
 protocol_opt?=
 JSON_OPT?=--michelson-format json
 tsc=npx tsc
@@ -13,7 +10,7 @@ help:
 	@echo  '  clean           - Remove generated Michelson files'
 	@echo  '  compile         - Compiles smart contract Random'
 	@echo  '  test            - Run integration tests (written in Ligo)'
-	@echo  '  deploy          - Deploy smart contracts advisor & indice (typescript using Taquito)'
+	@echo  '  deploy          - Deploy smart contract Random (typescript using Taquito)'
 	@echo  ''
 
 all: clean compile test
@@ -22,15 +19,15 @@ compile: random
 
 random: random.tz random.json
 
-random.tz: contracts/main.jsligo
+random.tz: src/main.jsligo
 	@if [ ! -d ./compiled ]; then mkdir ./compiled ; fi
 	@echo "Compiling smart contract to Michelson"
-	@$(ligo_compiler) compile contract $^ -e main $(protocol_opt) $(PROJECTROOT_OPT) > compiled/$@
+	@$(ligo_compiler) compile contract $^ -e main $(protocol_opt) > compiled/$@
 
-random.json: contracts/main.jsligo
+random.json: src/main.jsligo
 	@if [ ! -d ./compiled ]; then mkdir ./compiled ; fi
 	@echo "Compiling smart contract to Michelson in JSON format"
-	@$(ligo_compiler) compile contract $^ $(JSON_OPT) -e main $(protocol_opt) $(PROJECTROOT_OPT) > compiled/$@
+	@$(ligo_compiler) compile contract $^ $(JSON_OPT) -e main $(protocol_opt) > compiled/$@
 
 clean:
 	@echo "Removing Michelson files"
@@ -47,12 +44,13 @@ test_ligo_bytes: test/test_bytes.jsligo
 	@$(ligo_compiler) run test $^ $(protocol_opt)
 
 deploy: node_modules deploy.js
-	@echo "Deploying contract"
-	@node deploy/deploy.js
 
 deploy.js:
-	@cd deploy && $(tsc) deploy.ts --resolveJsonModule -esModuleInterop
+	@if [ ! -f ./deploy/metadata.json ]; then cp deploy/metadata.json.dist deploy/metadata.json ; fi
+	@echo "Running deploy script\n"
+	@cd deploy && npm start
 
 node_modules:
-	@echo "Install node modules"
+	@echo "Installing deploy script dependencies"
 	@cd deploy && npm install
+	@echo ""
