@@ -1,4 +1,4 @@
-#import "../contracts/bytes_utils.jsligo" "Convert"
+#import "../src/bytes_utils.jsligo" "Convert"
 
 
 const test = () : unit => {

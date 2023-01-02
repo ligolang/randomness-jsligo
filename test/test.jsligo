@@ -1,4 +1,4 @@
-#import "../contracts/main.jsligo" "Random"
+#import "../src/main.jsligo" "Random"
 
 const create_bytes = (payload: bytes, time_secret: nat): [bytes,bytes] => 
     [ Crypto.sha512(Bytes.pack(payload, time_secret)), payload ];
