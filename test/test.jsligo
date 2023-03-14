@@ -1,7 +1,7 @@
 #import "../src/main.jsligo" "Random"
 
 const create_bytes = (payload: bytes, time_secret: nat): [bytes,bytes] => 
-    [ Crypto.sha512(Bytes.pack(payload, time_secret)), payload ];
+    [ Crypto.sha512(Bytes.pack([payload, time_secret])), payload ];
 
 const test_one_complete_cycle = () : unit => {
     const alice: address = Test.nth_bootstrap_account(0);
@@ -88,7 +88,7 @@ const test_one_complete_cycle = () : unit => {
         let s2 : Random.storage = Test.get_storage(addr);
         let _ = Test.log(s2.result_nat);
         let _ = assert (s2.result_nat != (None() as option<nat>));
-        "OK"
+        return "OK"
         //Test.log("test finished")
     };
     // execution
@@ -158,7 +158,7 @@ const test_roll_dices = () : unit => {
         let s2 : Random.storage = Test.get_storage(addr);
         let _ = Test.log(s2.result_nat);
         let _ = assert (s2.result_nat != (None() as option<nat>));
-        "OK"
+        return "OK"
         //Test.log("test finished")
     };
     let _test_rollD20 = () : string => {
@@ -216,7 +216,7 @@ const test_roll_dices = () : unit => {
         let result : nat =Option.unopt(s2.result_nat); 
         let _ = assert (result <= s2.max);
         let _ = assert (result >= s2.min);
-        "OK"
+        return "OK"
         //Test.log("test finished")
     };
 
@@ -276,7 +276,7 @@ const test_roll_dices = () : unit => {
         let result : nat =Option.unopt(s2.result_nat); 
         let _ = assert (result <= s2.max);
         let _ = assert (result >= s2.min);
-        "OK"
+        return "OK"
         //Test.log("test finished")
     };
 
@@ -335,7 +335,7 @@ const test_roll_dices = () : unit => {
         let result : nat = Option.unopt(s2.result_nat); 
         let _ = assert (result <= s2.max);
         let _ = assert (result >= s2.min);
-        "OK"
+        return "OK"
         //Test.log("test finished")
     };
     
