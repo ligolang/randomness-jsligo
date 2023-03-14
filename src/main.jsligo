@@ -9,7 +9,7 @@ export type return_ = [list<operation>, storage];
 
 
 // Sender commits its bytes
-const commit = ([p, st] : [Parameter.Types.commit_param, storage]) : [list<operation>, storage] => {
+const commit = (p : Parameter.Types.commit_param, st : storage) : [list<operation>, storage] => {
     let _check_authorized : unit = assert_with_error(Set.mem(Tezos.get_sender(), st.participants), Errors.not_authorized);
     let _check_amount : unit = assert_with_error( (Tezos.get_amount() >= (10 as mutez)), Errors.commit_expects_10_mutez_lock);
     let new_secrets = match (Map.find_opt(Tezos.get_sender(), st.secrets), {
@@ -24,17 +24,16 @@ const commit = ([p, st] : [Parameter.Types.commit_param, storage]) : [list<opera
 };
         
 // Sender reveals its bytes content
-const reveal = ([p, s] : [Parameter.Types.reveal_param, storage]) : [list<operation>, storage] => {
+const reveal = (p : Parameter.Types.reveal_param, s : storage) : [list<operation>, storage] => {
     let sender_address : address = Tezos.get_sender();
     let _check_amount : unit = assert_with_error( (Tezos.get_amount() == (0 as mutez)), Errors.reveal_expects_0_mutez_lock);
     let _check_authorized : unit = assert_with_error( (Set.mem(sender_address, s.participants)), Errors.not_authorized);
     // check all bytes has been received
-    let committed = ([acc, elt] : [bool, address]) : bool => { 
+    let committed = ([acc, elt] : [bool, address]) : bool =>
         match (Map.find_opt(elt, s.secrets), {
             None: () => acc && false,
             Some: (_x: bytes) => acc && true
         });
-    };
     let _all_bytes_committed = Set.fold(committed, s.participants, true);
     let _check_all_bytes : unit = assert_with_error( (_all_bytes_committed == true), Errors.missing_bytes);
 
@@ -45,7 +44,7 @@ const reveal = ([p, s] : [Parameter.Types.reveal_param, storage]) : [list<operat
     });
 
     // open bytes and stores the bytes content
-    if (Crypto.sha512(Bytes.pack(decoded_payload,secret)) != sender_bytes) {
+    if (Crypto.sha512(Bytes.pack([decoded_payload,secret])) != sender_bytes) {
         return failwith(Errors.fail_open_bytes_decrypt);
     };
 
@@ -55,12 +54,11 @@ const reveal = ([p, s] : [Parameter.Types.reveal_param, storage]) : [list<operat
     });
 
     // check all bytes has been revealed
-    let revealed = ([acc, elt] : [bool, address]) : bool => { 
+    let revealed = ([acc, elt] : [bool, address]) : bool =>
         match (Map.find_opt(elt, new_decoded_payloads), {
             None: () => acc && false,
             Some: (_x: bytes) => acc && true
         });
-    };
     let new_locked : map<address, tez> = match (Map.find_opt(Tezos.get_sender(), s.locked_tez), {
         None: () => failwith(Errors.wrong_user_balance),
         Some: (val: tez) => match (val - (10 as mutez), {
@@ -86,7 +84,7 @@ const reveal = ([p, s] : [Parameter.Types.reveal_param, storage]) : [list<operat
     }
 };
     
-const reset = ([param, store] : [Parameter.Types.reset_param, storage]) : [list<operation>, storage] => {
+const reset = (param : Parameter.Types.reset_param, store : storage) : [list<operation>, storage] => {
     // clean secrets_bytes and decoded_payloads
     let _check_amount : unit = assert_with_error( (Tezos.get_amount() == (0 as mutez)), Errors.reset_expects_0_mutez_lock);
     return [(list([]) as list<operation>), { ...store,  
@@ -98,7 +96,7 @@ const reset = ([param, store] : [Parameter.Types.reset_param, storage]) : [list<
     }];
 };
 
-const main = ([ep, store] : [parameter, storage]) : return_ => {
+const main = (ep : parameter, store : storage) : return_ => {
     return match (ep, { 
     Commit: (p : Parameter.Types.commit_param) => commit(p, store),
     Reveal: (p: Parameter.Types.reveal_param) => reveal(p, store),

@@ -19,8 +19,8 @@ export namespace Types {
 export namespace Utils {
 
     // Apply Mersenne twister algorithm to get a random number between min an max
-    const random_range = ([state0, state1, min, max]: [nat, nat, nat, nat]) : [nat, nat] => {
-        let random = ([state0, state1]: [nat, nat]) : nat => {
+    const random_range = (state0 : nat, state1 : nat, min : nat, max : nat) : [nat, nat] => {
+        let random = (state0 : nat, state1 : nat) : nat => {
             let s0 = state0;
             let s1 = state1;
             let s1_ = Bitwise.xor(s1, Bitwise.shift_left(s1, 23 as nat)) ;
@@ -36,7 +36,7 @@ export namespace Utils {
     // Once everybody has commit & reveal we can compute bytes seed
     const build_seed_bytes = (payloads : map<address, bytes>) : option<bytes> => {
         // hash all decoded payloads
-        let hash_payload = ([acc, elt]: [list<bytes>,  [address, bytes]]) : list<bytes> => { list([ Crypto.keccak(elt[1]), ...acc]); };
+        let hash_payload = ([acc, elt]: [list<bytes>,  [address, bytes]]) : list<bytes> => list([ Crypto.keccak(elt[1]), ...acc]);
         let pl : list<bytes> = Map.fold(hash_payload, payloads, list([]) as list<bytes>);
         // combine all hashes (concat and hash again)
         let hashthemall = ([acc, elt]: [option<bytes>, bytes]) : option<bytes> => { 
@@ -45,11 +45,11 @@ export namespace Utils {
                 Some: (pred: bytes) => Some(Crypto.keccak(Bytes.concat(elt, pred)))
             })
         };
-        List.fold(hashthemall, pl, (None() as option<bytes>))
+        return List.fold(hashthemall, pl, (None() as option<bytes>))
     };
 
     // Compute a seed based on decoded bytes payloads
-    export const build_random_nat = ([payloads, min, max, last_seed] : [map<address, bytes>, nat, nat, nat]) : [nat, nat] => {
+    export const build_random_nat = (payloads : map<address, bytes>, min : nat, max : nat, last_seed : nat) : [nat, nat] => {
         // Compute a seed based on decoded bytes payloads
         let seed_bytes = build_seed_bytes(payloads);
         // convert hash seed into nat seed

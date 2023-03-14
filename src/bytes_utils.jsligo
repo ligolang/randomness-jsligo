@@ -2,8 +2,8 @@ export namespace Utils {
 
    
 
-    const power = ([x, y] : [nat, nat]) : nat => {
-        let multiply = ([acc, elt, last]: [nat, nat, nat] ) : nat => { if (last == (0 as nat)) { return acc } else { return multiply(acc * elt, elt, abs(last - (1 as nat))) } };
+    const power = (x : nat, y : nat) : nat => {
+        let multiply = (acc : nat, elt : nat, last : nat) : nat => { if (last == (0 as nat)) { return acc } else { return multiply(acc * elt, elt, abs(last - (1 as nat))) } };
         return multiply((1 as nat), x, y)
     };
         
@@ -275,7 +275,7 @@ export namespace Utils {
     };
 
     export const bytes_to_nat = (payload : bytes) : nat => {
-        let convert_to_nat = ([acc, indice, payload] : [nat, nat, bytes]) : nat => {
+        let convert_to_nat = (acc : nat, indice : nat, payload : bytes) : nat => {
             if (indice == (1 as nat)) {
                 return acc + hexa_to_nat(payload)
             } 
@@ -287,7 +287,7 @@ export namespace Utils {
                 return convert_to_nat(acc + one_left_nat, abs(indice - (1 as nat)), right_bytes)
             }
         };
-        convert_to_nat(0 as nat, Bytes.length(payload), payload)
+        return convert_to_nat(0 as nat, Bytes.length(payload), payload)
     };
 
 }
