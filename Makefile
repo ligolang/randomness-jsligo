@@ -22,12 +22,12 @@ random: random.tz random.json
 random.tz: src/main.jsligo
 	@if [ ! -d ./compiled ]; then mkdir ./compiled ; fi
 	@echo "Compiling smart contract to Michelson"
-	@$(ligo_compiler) compile contract $^ -e main $(protocol_opt) > compiled/$@
+	@$(ligo_compiler) compile contract $^  $(protocol_opt) > compiled/$@
 
 random.json: src/main.jsligo
 	@if [ ! -d ./compiled ]; then mkdir ./compiled ; fi
 	@echo "Compiling smart contract to Michelson in JSON format"
-	@$(ligo_compiler) compile contract $^ $(JSON_OPT) -e main $(protocol_opt) > compiled/$@
+	@$(ligo_compiler) compile contract $^ $(JSON_OPT)  $(protocol_opt) > compiled/$@
 
 clean:
 	@echo "Removing Michelson files"
