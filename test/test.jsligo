@@ -1,6 +1,6 @@
 #import "../src/main.jsligo" "Random"
 
-const create_bytes = (payload: bytes, time_secret: nat): [bytes,bytes] => 
+const create_bytes = (payload: bytes, time_secret: nat): [bytes,bytes] =>
     [ Crypto.sha512(Bytes.pack([payload, time_secret])), payload ];
 
 const test_one_complete_cycle = () : unit => {
@@ -8,7 +8,7 @@ const test_one_complete_cycle = () : unit => {
     const bob: address = Test.nth_bootstrap_account(1);
 
     let init_seed : nat = (3268854739249 as nat);
-    let init_storage : Random.Storage.Types.t = { 
+    let init_storage : Random.Storage.Types.t = {
         participants: Set.add(alice, (Set.add(bob, (Set.empty as set<address>)))),
         locked_tez:(Map.empty as map<address, tez>),
         secrets:(Map.empty as map<address, bytes>),
@@ -20,23 +20,23 @@ const test_one_complete_cycle = () : unit => {
         metadata: (Big_map.empty as big_map<string, bytes>)
     };
     // originate Random smart contract
-    const [addr,_,_] = Test.originate(Random.main, init_storage, (0 as tez));
+    const [addr,_,_] = Test.originate_module(contract_of(Random), init_storage, (0 as tez));
     let _s_init = Test.get_storage(addr);
     //let _ = Test.log(s_init);
 
     let _test_full_cycle_commit_reveal_should_works = () : string => {
-    
+
         let payload : bytes = 0x0a;
-        let time_secret : nat = (10 as nat); 
+        let time_secret : nat = (10 as nat);
         let [my_bytes,bytes_key] = create_bytes(payload, time_secret);
 
         let payload2 : bytes = 0x0b;
-        let time_secret2 : nat = (99 as nat); 
+        let time_secret2 : nat = (99 as nat);
         let [my_bytes2,bytes_key2] = create_bytes(payload2,time_secret2);
 
         //let _ = Test.log("bytess created");
 
-        let x : contract<Random.parameter> = Test.to_contract(addr);
+        let x : contract<parameter_of Random> = Test.to_contract(addr);
 
         // alice commits
         //let _ = Test.log("alice commits");
@@ -47,10 +47,10 @@ const test_one_complete_cycle = () : unit => {
 
         //let _ = Test.log("check alice bytes");
         let s : Random.storage = Test.get_storage(addr);
-        let response : bool = match (Map.find_opt(alice, s.secrets), {
-            None: () => false,
-            Some: (_x: bytes) => true
-        });
+        let response : bool = match (Map.find_opt(alice, s.secrets)) {
+            when(None()): false;
+            when(Some(_x)): true;
+        };
         //let _ = Test.log(s);
         let _ = assert (response);
 
@@ -64,10 +64,10 @@ const test_one_complete_cycle = () : unit => {
 
         //let _ = Test.log("check bob bytes");
         let s3 : Random.storage = Test.get_storage(addr);
-        let response2 : bool = match (Map.find_opt(bob, s3.secrets), {
-            None: () => false,
-            Some: (_x: bytes) => true
-        });
+        let response2 : bool = match (Map.find_opt(bob, s3.secrets)) {
+            when(None()): false;
+            when(Some(_x)): true;
+        };
         //let _ = Test.log(s3);
         let _ = assert (response2);
 
@@ -83,7 +83,7 @@ const test_one_complete_cycle = () : unit => {
         let _ = Test.set_source(bob);
         let reveal_args2 : Random.Parameter.Types.reveal_param = [bytes_key2, time_secret2];
         let _ = Test.transfer_to_contract_exn(x, (Reveal(reveal_args2)), (0 as mutez));
-        
+
         //let _ = Test.log("check storage");
         let s2 : Random.storage = Test.get_storage(addr);
         let _ = Test.log(s2.result_nat);
@@ -99,7 +99,7 @@ const test_roll_dices = () : unit => {
     const alice: address = Test.nth_bootstrap_account(0);
     const bob: address = Test.nth_bootstrap_account(1);
     let init_seed : nat = (3268854739249 as nat);
-    let init_storage : Random.Storage.Types.t = { 
+    let init_storage : Random.Storage.Types.t = {
         participants: Set.add(alice, (Set.add(bob, (Set.empty as set<address>)))),
         locked_tez:(Map.empty as map<address, tez>),
         secrets:(Map.empty as map<address, bytes>),
@@ -111,24 +111,24 @@ const test_roll_dices = () : unit => {
         metadata: (Big_map.empty as big_map<string, bytes>)
     };
     // originate Random smart contract
-    const [addr,_,_] = Test.originate(Random.main, init_storage, (0 as tez));
+    const [addr,_,_] = Test.originate_module(contract_of(Random), init_storage, (0 as tez));
     let _s_init = Test.get_storage(addr);
     //let _ = Test.log(s_init);
 
 
     let _test_rollD1000 = () : string => {
-    
+
         let payload : bytes = 0x0a1234;
-        let time_secret : nat = (10 as nat); 
+        let time_secret : nat = (10 as nat);
         let [my_bytes,bytes_key] = create_bytes(payload, time_secret);
 
         let payload2 : bytes = 0x0b455469;
-        let time_secret2 : nat = (84 as nat); 
+        let time_secret2 : nat = (84 as nat);
         let [my_bytes2,bytes_key2] = create_bytes(payload2, time_secret2);
 
         //let _ = Test.log("bytess created");
 
-        let x : contract<Random.parameter> = Test.to_contract(addr);
+        let x : contract<parameter_of Random> = Test.to_contract(addr);
 
         // alice commits
         //let _ = Test.log("alice commits");
@@ -153,7 +153,7 @@ const test_roll_dices = () : unit => {
         let _ = Test.set_source(bob);
         let reveal_args2 : Random.Parameter.Types.reveal_param = [bytes_key2, time_secret2];
         let _ = Test.transfer_to_contract_exn(x, (Reveal(reveal_args2)), (0 as mutez));
-        
+
         //let _ = Test.log("check storage");
         let s2 : Random.storage = Test.get_storage(addr);
         let _ = Test.log(s2.result_nat);
@@ -162,18 +162,18 @@ const test_roll_dices = () : unit => {
         //Test.log("test finished")
     };
     let _test_rollD20 = () : string => {
-    
+
         let payload : bytes = 0x0a1234;
-        let time_secret : nat = (10 as nat); 
+        let time_secret : nat = (10 as nat);
         let [my_bytes,bytes_key] = create_bytes(payload, time_secret);
 
         let payload2 : bytes = 0x0b455469;
-        let time_secret2 : nat = (84 as nat); 
+        let time_secret2 : nat = (84 as nat);
         let [my_bytes2,bytes_key2] = create_bytes(payload2, time_secret2);
 
         //let _ = Test.log("bytess created");
 
-        let x : contract<Random.parameter> = Test.to_contract(addr);
+        let x : contract<parameter_of Random> = Test.to_contract(addr);
 
         // alice reset
         //let _ = Test.log("alice reset");
@@ -208,12 +208,12 @@ const test_roll_dices = () : unit => {
         let _ = Test.set_source(bob);
         let reveal_args2 : Random.Parameter.Types.reveal_param = [bytes_key2, time_secret2];
         let _ = Test.transfer_to_contract_exn(x, (Reveal(reveal_args2)), (0 as mutez));
-        
+
         //let _ = Test.log("check storage");
         let s2 : Random.storage = Test.get_storage(addr);
         let _ = Test.log(s2.result_nat);
         let _ = assert (s2.result_nat != (None() as option<nat>));
-        let result : nat =Option.unopt(s2.result_nat); 
+        let result : nat =Option.unopt(s2.result_nat);
         let _ = assert (result <= s2.max);
         let _ = assert (result >= s2.min);
         return "OK"
@@ -221,18 +221,18 @@ const test_roll_dices = () : unit => {
     };
 
     let _test_rollD20_again = () : string => {
-    
+
         let payload : bytes = 0x0a1234;
-        let time_secret : nat = (10 as nat); 
+        let time_secret : nat = (10 as nat);
         let [my_bytes,bytes_key] = create_bytes(payload, time_secret);
 
         let payload2 : bytes = 0x0b455469;
-        let time_secret2 : nat = (84 as nat); 
+        let time_secret2 : nat = (84 as nat);
         let [my_bytes2,bytes_key2] = create_bytes(payload2, time_secret2);
 
         //let _ = Test.log("bytess created");
 
-        let x : contract<Random.parameter> = Test.to_contract(addr);
+        let x : contract<parameter_of Random> = Test.to_contract(addr);
 
         // alice reset
         //let _ = Test.log("alice reset");
@@ -268,12 +268,12 @@ const test_roll_dices = () : unit => {
         let _ = Test.set_source(bob);
         let reveal_args2 : Random.Parameter.Types.reveal_param = [bytes_key2, time_secret2];
         let _ = Test.transfer_to_contract_exn(x, (Reveal(reveal_args2)), (0 as mutez));
-        
+
         //let _ = Test.log("check storage");
         let s2 : Random.storage = Test.get_storage(addr);
         let _ = Test.log(s2.result_nat);
         let _ = assert (s2.result_nat != (None() as option<nat>));
-        let result : nat =Option.unopt(s2.result_nat); 
+        let result : nat =Option.unopt(s2.result_nat);
         let _ = assert (result <= s2.max);
         let _ = assert (result >= s2.min);
         return "OK"
@@ -281,18 +281,18 @@ const test_roll_dices = () : unit => {
     };
 
     let _test_rollD20_again_again = () : string => {
-    
+
         let payload : bytes = 0x0a1234;
-        let time_secret : nat = (10 as nat); 
+        let time_secret : nat = (10 as nat);
         let [my_bytes,bytes_key] = create_bytes(payload, time_secret);
 
         let payload2 : bytes = 0x0b455469;
-        let time_secret2 : nat = (84 as nat); 
+        let time_secret2 : nat = (84 as nat);
         let [my_bytes2,bytes_key2] = create_bytes(payload2, time_secret2);
 
         //let _ = Test.log("bytess created");
 
-        let x : contract<Random.parameter> = Test.to_contract(addr);
+        let x : contract<parameter_of Random> = Test.to_contract(addr);
 
         // alice reset
         //let _ = Test.log("alice reset");
@@ -327,18 +327,18 @@ const test_roll_dices = () : unit => {
         let _ = Test.set_source(bob);
         let reveal_args2 : Random.Parameter.Types.reveal_param = [bytes_key2, time_secret2];
         let _ = Test.transfer_to_contract_exn(x, (Reveal(reveal_args2)), (0 as mutez));
-        
+
         //let _ = Test.log("check storage");
         let s2 : Random.storage = Test.get_storage(addr);
         let _ = Test.log(s2.result_nat);
         let _ = assert (s2.result_nat != (None() as option<nat>));
-        let result : nat = Option.unopt(s2.result_nat); 
+        let result : nat = Option.unopt(s2.result_nat);
         let _ = assert (result <= s2.max);
         let _ = assert (result >= s2.min);
         return "OK"
         //Test.log("test finished")
     };
-    
+
     // execution
     const _test_dice_1 = _test_rollD1000();
     const _test_dice_2 = _test_rollD20();
