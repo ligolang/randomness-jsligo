@@ -1,13 +1,13 @@
-const not_authorized : string = "Not authorized";
-const missing_bytes : string = "Missing some bytes";
-const commit_expects_10_mutez_lock : string = "You must lock 10mutez";
-const reveal_expects_0_mutez_lock : string = "You must not send tez (reveal entrypoint)";
-const reset_expects_0_mutez_lock : string = "You must not send tez (reset entrypoint)";
+export const not_authorized : string = "Not authorized";
+export const missing_bytes : string = "Missing some bytes";
+export const commit_expects_10_mutez_lock : string = "You must lock 10mutez";
+export const reveal_expects_0_mutez_lock : string = "You must not send tez (reveal entrypoint)";
+export const reset_expects_0_mutez_lock : string = "You must not send tez (reset entrypoint)";
 
-const fail_open_bytes_timelock : string = "Could not open bytes: Fail_timelock";
-const fail_open_bytes_decrypt : string = "Could not open bytes: Fail_decrypt";
-const bytes_already_revealed : string = "Chest already revealed";
-const unknown_user_account : string = "Unknown user account";
-const wrong_user_balance : string = "User shold have locked some tez during commit bytes phase";
-const bytes_already_committed : string = "Sender has already committed its bytes";
-const wrong_amount_locked_tez : string = "The locked amount is incorrect";
+export const fail_open_bytes_timelock : string = "Could not open bytes: Fail_timelock";
+export const fail_open_bytes_decrypt : string = "Could not open bytes: Fail_decrypt";
+export const bytes_already_revealed : string = "Chest already revealed";
+export const unknown_user_account : string = "Unknown user account";
+export const wrong_user_balance : string = "User shold have locked some tez during commit bytes phase";
+export const bytes_already_committed : string = "Sender has already committed its bytes";
+export const wrong_amount_locked_tez : string = "The locked amount is incorrect";

@@ -8,43 +8,43 @@ const test = () : unit => {
         let payload : bytes = 0x00;
         {
           let value : nat = Convert.Utils.bytes_to_nat(payload);
-          assert(value == (0 as nat))
+          assert(value == 0n)
         };
 
         {
           payload = 0x0a;
           let value : nat = Convert.Utils.bytes_to_nat(payload);
-          assert(value == (10 as nat));
+          assert(value == 10n);
         };
 
         {
           payload = 0x0A;
           let value : nat = Convert.Utils.bytes_to_nat(payload);
-          assert(value == (10 as nat));
+          assert(value == 10n);
         };
 
         {
           payload = 0x2c;
           let value : nat = Convert.Utils.bytes_to_nat(payload);
-          assert(value == (44 as nat));
+          assert(value == 44n);
         };
 
         {
           payload = 0x2C;
           let value : nat = Convert.Utils.bytes_to_nat(payload);
-          assert(value == (44 as nat));
+          assert(value == 44n);
         };
 
         {
           payload = 0xFF;
           let value : nat = Convert.Utils.bytes_to_nat(payload);
-          assert(value == (255 as nat));
+          assert(value == 255n);
         };
 
         {
           payload = 0x1234;
           let value : nat = Convert.Utils.bytes_to_nat(payload);
-          assert(value == (4660 as nat));
+          assert(value == 4660n);
         };
 
         Test.log("Test _simple_convert_bytes_to_nat finished")
@@ -56,13 +56,13 @@ const test = () : unit => {
         
         {
           let value : nat = Convert.Utils.bytes_to_nat(payload);
-          assert(value == (4660 as nat));
+          assert(value == 4660n);
         };
 
         {
           payload = 0x123400;
           let value : nat = Convert.Utils.bytes_to_nat(payload);
-          assert(value == (4660 as nat) * (256 as nat));
+          assert(value == 4660n * 256n);
         };
 
         Test.log("Test _complex_convert_bytes_to_nat finished")

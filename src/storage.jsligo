@@ -28,22 +28,22 @@ export namespace Utils {
             let s1___ =  Bitwise.xor(s1__, s0);
             let s1____ =  Bitwise.xor(s1___, Bitwise.shift_left(s0, 26 as nat));
             return s0 + s1____
-        } 
+        }
         let ns = random (state0, state1);
-        return [ns, ns % (max + (1 as nat) - min) + min]
+        return [ns, ns % (max + 1n - min) + min]
     };
-    
+
     // Once everybody has commit & reveal we can compute bytes seed
     const build_seed_bytes = (payloads : map<address, bytes>) : option<bytes> => {
         // hash all decoded payloads
         let hash_payload = ([acc, elt]: [list<bytes>,  [address, bytes]]) : list<bytes> => list([ Crypto.keccak(elt[1]), ...acc]);
         let pl : list<bytes> = Map.fold(hash_payload, payloads, list([]) as list<bytes>);
         // combine all hashes (concat and hash again)
-        let hashthemall = ([acc, elt]: [option<bytes>, bytes]) : option<bytes> => { 
-            return match(acc, {
-                None: () => Some(elt),
-                Some: (pred: bytes) => Some(Crypto.keccak(Bytes.concat(elt, pred)))
-            })
+        let hashthemall = ([acc, elt]: [option<bytes>, bytes]) : option<bytes> => {
+            return match(acc) {
+                when(None()): Some(elt);
+                when(Some(pred)): Some(Crypto.keccak(Bytes.concat(elt, pred)));
+            }
         };
         return List.fold(hashthemall, pl, (None() as option<bytes>))
     };
@@ -53,10 +53,10 @@ export namespace Utils {
         // Compute a seed based on decoded bytes payloads
         let seed_bytes = build_seed_bytes(payloads);
         // convert hash seed into nat seed
-        let seed : nat = match (seed_bytes, { 
-            None: () => (failwith("could not construct a hash") as nat),
-            Some: (hsh: bytes) => Convert.Utils.bytes_to_nat(hsh)
-        });
+        let seed : nat = match (seed_bytes) {
+            when(None()): (failwith("could not construct a hash") as nat);
+            when(Some(hsh)): Convert.Utils.bytes_to_nat(hsh);
+        };
         // generate a random nat (between range) based on the computed nat seed
         return random_range(last_seed, seed, min, max)
     };
