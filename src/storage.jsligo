@@ -30,7 +30,7 @@ export namespace Utils {
             return s0 + s1____
         }
         let ns = random (state0, state1);
-        return [ns, ns % (max + (1 as nat) - min) + min]
+        return [ns, ns % (max + 1n - min) + min]
     };
 
     // Once everybody has commit & reveal we can compute bytes seed
