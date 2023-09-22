@@ -20,9 +20,9 @@ const test_one_complete_cycle = () : unit => {
         metadata: (Big_map.empty as big_map<string, bytes>)
     };
     // originate Random smart contract
-    const [addr,_,_] = Test.originate_module(contract_of(Random), init_storage, 0tez);
-    let _s_init = Test.get_storage(addr);
-    //let _ = Test.log(s_init);
+    const [addr,_c,_n] = Test.originate_module(contract_of(Random), init_storage, 0tez);
+    Test.get_storage(addr);
+    //Test.log(s_init);
 
     let _test_full_cycle_commit_reveal_should_works = () : string => {
 
@@ -34,60 +34,60 @@ const test_one_complete_cycle = () : unit => {
         let time_secret2 : nat = 99n;
         let [my_bytes2,bytes_key2] = create_bytes(payload2,time_secret2);
 
-        //let _ = Test.log("bytess created");
+        //Test.log("bytess created");
 
         let x : contract<parameter_of Random> = Test.to_contract(addr);
 
         // alice commits
-        //let _ = Test.log("alice commits");
-        let _ = Test.set_source(alice);
+        //Test.log("alice commits");
+        Test.set_source(alice);
         let commit_args : Random.Parameter.Types.commit_param = { secret_action:my_bytes };
-        //let _ = Test.log(commit_args);
-        let _ = Test.transfer_to_contract_exn(x, (Commit(commit_args)), 10mutez);
+        //Test.log(commit_args);
+        Test.transfer_to_contract_exn(x, (Commit(commit_args)), 10mutez);
 
-        //let _ = Test.log("check alice bytes");
+        //Test.log("check alice bytes");
         let s : Random.storage = Test.get_storage(addr);
         let response : bool = match (Map.find_opt(alice, s.secrets)) {
             when(None()): false;
             when(Some(_x)): true;
         };
-        //let _ = Test.log(s);
-        let _ = assert (response);
+        //Test.log(s);
+        assert (response);
 
 
         // bob commits
-        //let _ = Test.log("bob commits");
-        let _ = Test.set_source(bob);
+        //Test.log("bob commits");
+        Test.set_source(bob);
         let commit_args2 : Random.Parameter.Types.commit_param = { secret_action:my_bytes2 };
-        //let _ = Test.log(commit_args);
-        let _ = Test.transfer_to_contract_exn(x, (Commit(commit_args2)), 10mutez);
+        //Test.log(commit_args);
+        Test.transfer_to_contract_exn(x, (Commit(commit_args2)), 10mutez);
 
-        //let _ = Test.log("check bob bytes");
+        //Test.log("check bob bytes");
         let s3 : Random.storage = Test.get_storage(addr);
         let response2 : bool = match (Map.find_opt(bob, s3.secrets)) {
             when(None()): false;
             when(Some(_x)): true;
         };
-        //let _ = Test.log(s3);
-        let _ = assert (response2);
+        //Test.log(s3);
+        assert (response2);
 
         // alice reveals
-        //let _ = Test.log("alice reveals");
-        let _ = Test.set_source(alice);
+        //Test.log("alice reveals");
+        Test.set_source(alice);
         let reveal_args : Random.Parameter.Types.reveal_param = [bytes_key, time_secret];
-        //let _ = Test.log(reveal_args);
-        let _ = Test.transfer_to_contract_exn(x, (Reveal(reveal_args)), 0mutez);
+        //Test.log(reveal_args);
+        Test.transfer_to_contract_exn(x, (Reveal(reveal_args)), 0mutez);
 
         // bob reveals
-        //let _ = Test.log("bob reveals");
-        let _ = Test.set_source(bob);
+        //Test.log("bob reveals");
+        Test.set_source(bob);
         let reveal_args2 : Random.Parameter.Types.reveal_param = [bytes_key2, time_secret2];
-        let _ = Test.transfer_to_contract_exn(x, (Reveal(reveal_args2)), 0mutez);
+        Test.transfer_to_contract_exn(x, (Reveal(reveal_args2)), 0mutez);
 
-        //let _ = Test.log("check storage");
+        //Test.log("check storage");
         let s2 : Random.storage = Test.get_storage(addr);
-        let _ = Test.log(s2.result_nat);
-        let _ = assert (s2.result_nat != (None() as option<nat>));
+        Test.log(s2.result_nat);
+        assert (s2.result_nat != (None() as option<nat>));
         return "OK"
         //Test.log("test finished")
     };
@@ -111,9 +111,9 @@ const test_roll_dices = () : unit => {
         metadata: (Big_map.empty as big_map<string, bytes>)
     };
     // originate Random smart contract
-    const [addr,_,_] = Test.originate_module(contract_of(Random), init_storage, 0tez);
-    let _s_init = Test.get_storage(addr);
-    //let _ = Test.log(s_init);
+    const [addr,_c,_n] = Test.originate_module(contract_of(Random), init_storage, 0tez);
+    Test.get_storage(addr);
+    //Test.log(s_init);
 
 
     let _test_rollD1000 = () : string => {
@@ -126,38 +126,38 @@ const test_roll_dices = () : unit => {
         let time_secret2 : nat = 84n;
         let [my_bytes2,bytes_key2] = create_bytes(payload2, time_secret2);
 
-        //let _ = Test.log("bytess created");
+        //Test.log("bytess created");
 
         let x : contract<parameter_of Random> = Test.to_contract(addr);
 
         // alice commits
-        //let _ = Test.log("alice commits");
-        let _ = Test.set_source(alice);
+        //Test.log("alice commits");
+        Test.set_source(alice);
         let commit_args : Random.Parameter.Types.commit_param = {secret_action:my_bytes};
-        let _ = Test.transfer_to_contract_exn(x, (Commit(commit_args)), 10mutez);
+        Test.transfer_to_contract_exn(x, (Commit(commit_args)), 10mutez);
 
         // bob commits
-        //let _ = Test.log("bob commits");
-        let _ = Test.set_source(bob);
+        //Test.log("bob commits");
+        Test.set_source(bob);
         let commit_args2 : Random.Parameter.Types.commit_param = {secret_action:my_bytes2};
-        let _ = Test.transfer_to_contract_exn(x, (Commit(commit_args2)), 10mutez);
+        Test.transfer_to_contract_exn(x, (Commit(commit_args2)), 10mutez);
 
         // alice reveals
-        //let _ = Test.log("alice reveals");
-        let _ = Test.set_source(alice);
+        //Test.log("alice reveals");
+        Test.set_source(alice);
         let reveal_args : Random.Parameter.Types.reveal_param = [bytes_key, time_secret];
-        let _ = Test.transfer_to_contract_exn(x, (Reveal(reveal_args)), 0mutez);
+        Test.transfer_to_contract_exn(x, (Reveal(reveal_args)), 0mutez);
 
         // bob reveals
-        //let _ = Test.log("bob reveals");
-        let _ = Test.set_source(bob);
+        //Test.log("bob reveals");
+        Test.set_source(bob);
         let reveal_args2 : Random.Parameter.Types.reveal_param = [bytes_key2, time_secret2];
-        let _ = Test.transfer_to_contract_exn(x, (Reveal(reveal_args2)), 0mutez);
+        Test.transfer_to_contract_exn(x, (Reveal(reveal_args2)), 0mutez);
 
-        //let _ = Test.log("check storage");
+        //Test.log("check storage");
         let s2 : Random.storage = Test.get_storage(addr);
-        let _ = Test.log(s2.result_nat);
-        let _ = assert (s2.result_nat != (None() as option<nat>));
+        Test.log(s2.result_nat);
+        assert (s2.result_nat != (None() as option<nat>));
         return "OK"
         //Test.log("test finished")
     };
@@ -171,51 +171,51 @@ const test_roll_dices = () : unit => {
         let time_secret2 : nat = 84n;
         let [my_bytes2,bytes_key2] = create_bytes(payload2, time_secret2);
 
-        //let _ = Test.log("bytess created");
+        //Test.log("bytess created");
 
         let x : contract<parameter_of Random> = Test.to_contract(addr);
 
         // alice reset
-        //let _ = Test.log("alice reset");
-        let _ = Test.set_source(alice);
+        //Test.log("alice reset");
+        Test.set_source(alice);
         let reset_args : Random.Parameter.Types.reset_param = {min:1n, max:20n};
-        let _ = Test.transfer_to_contract_exn(x, (Reset(reset_args)), 0mutez);
+        Test.transfer_to_contract_exn(x, (Reset(reset_args)), 0mutez);
 
-        //let _ = Test.log("check storage");
+        //Test.log("check storage");
         //let store_reseted : Random.storage = Test.get_storage(addr);
-        //let _ = Test.log(store_reseted);
+        //Test.log(store_reseted);
 
         // alice commits
-        //let _ = Test.log("alice commits");
-        let _ = Test.set_source(alice);
+        //Test.log("alice commits");
+        Test.set_source(alice);
         let commit_args : Random.Parameter.Types.commit_param = {secret_action:my_bytes};
-        let _ = Test.transfer_to_contract_exn(x, (Commit(commit_args)), 10mutez);
+        Test.transfer_to_contract_exn(x, (Commit(commit_args)), 10mutez);
 
         // bob commits
-        //let _ = Test.log("bob commits");
-        let _ = Test.set_source(bob);
+        //Test.log("bob commits");
+        Test.set_source(bob);
         let commit_args2 : Random.Parameter.Types.commit_param = {secret_action:my_bytes2};
-        let _ = Test.transfer_to_contract_exn(x, (Commit(commit_args2)), 10mutez);
+        Test.transfer_to_contract_exn(x, (Commit(commit_args2)), 10mutez);
 
         // alice reveals
-        //let _ = Test.log("alice reveals");
-        let _ = Test.set_source(alice);
+        //Test.log("alice reveals");
+        Test.set_source(alice);
         let reveal_args : Random.Parameter.Types.reveal_param = [bytes_key, time_secret];
-        let _ = Test.transfer_to_contract_exn(x, (Reveal(reveal_args)), 0mutez);
+        Test.transfer_to_contract_exn(x, (Reveal(reveal_args)), 0mutez);
 
         // bob reveals
-        //let _ = Test.log("bob reveals");
-        let _ = Test.set_source(bob);
+        //Test.log("bob reveals");
+        Test.set_source(bob);
         let reveal_args2 : Random.Parameter.Types.reveal_param = [bytes_key2, time_secret2];
-        let _ = Test.transfer_to_contract_exn(x, (Reveal(reveal_args2)), 0mutez);
+        Test.transfer_to_contract_exn(x, (Reveal(reveal_args2)), 0mutez);
 
-        //let _ = Test.log("check storage");
+        //Test.log("check storage");
         let s2 : Random.storage = Test.get_storage(addr);
-        let _ = Test.log(s2.result_nat);
-        let _ = assert (s2.result_nat != (None() as option<nat>));
+        Test.log(s2.result_nat);
+        assert (s2.result_nat != (None() as option<nat>));
         let result : nat =Option.unopt(s2.result_nat);
-        let _ = assert (result <= s2.max);
-        let _ = assert (result >= s2.min);
+        assert (result <= s2.max);
+        assert (result >= s2.min);
         return "OK"
         //Test.log("test finished")
     };
@@ -230,52 +230,52 @@ const test_roll_dices = () : unit => {
         let time_secret2 : nat = 84n;
         let [my_bytes2,bytes_key2] = create_bytes(payload2, time_secret2);
 
-        //let _ = Test.log("bytess created");
+        //Test.log("bytess created");
 
         let x : contract<parameter_of Random> = Test.to_contract(addr);
 
         // alice reset
-        //let _ = Test.log("alice reset");
-        let _ = Test.set_source(alice);
+        //Test.log("alice reset");
+        Test.set_source(alice);
         let reset_args : Random.Parameter.Types.reset_param = {min:1n, max:20n};
-        let _ = Test.transfer_to_contract_exn(x, (Reset(reset_args)), 0mutez);
+        Test.transfer_to_contract_exn(x, (Reset(reset_args)), 0mutez);
 
-        //let _ = Test.log("check storage");
+        //Test.log("check storage");
         //let store_reseted : Random.storage = Test.get_storage(addr);
-        //let _ = Test.log(store_reseted);
+        //Test.log(store_reseted);
 
 
         // alice commits
-        //let _ = Test.log("alice commits");
-        let _ = Test.set_source(alice);
+        //Test.log("alice commits");
+        Test.set_source(alice);
         let commit_args : Random.Parameter.Types.commit_param = {secret_action:my_bytes};
-        let _ = Test.transfer_to_contract_exn(x, (Commit(commit_args)), 10mutez);
+        Test.transfer_to_contract_exn(x, (Commit(commit_args)), 10mutez);
 
         // bob commits
-        //let _ = Test.log("bob commits");
-        let _ = Test.set_source(bob);
+        //Test.log("bob commits");
+        Test.set_source(bob);
         let commit_args2 : Random.Parameter.Types.commit_param = {secret_action:my_bytes2};
-        let _ = Test.transfer_to_contract_exn(x, (Commit(commit_args2)), 10mutez);
+        Test.transfer_to_contract_exn(x, (Commit(commit_args2)), 10mutez);
 
         // alice reveals
-        //let _ = Test.log("alice reveals");
-        let _ = Test.set_source(alice);
+        //Test.log("alice reveals");
+        Test.set_source(alice);
         let reveal_args : Random.Parameter.Types.reveal_param = [bytes_key, time_secret];
-        let _ = Test.transfer_to_contract_exn(x, (Reveal(reveal_args)), 0mutez);
+        Test.transfer_to_contract_exn(x, (Reveal(reveal_args)), 0mutez);
 
         // bob reveals
-        //let _ = Test.log("bob reveals");
-        let _ = Test.set_source(bob);
+        //Test.log("bob reveals");
+        Test.set_source(bob);
         let reveal_args2 : Random.Parameter.Types.reveal_param = [bytes_key2, time_secret2];
-        let _ = Test.transfer_to_contract_exn(x, (Reveal(reveal_args2)), 0mutez);
+        Test.transfer_to_contract_exn(x, (Reveal(reveal_args2)), 0mutez);
 
-        //let _ = Test.log("check storage");
+        //Test.log("check storage");
         let s2 : Random.storage = Test.get_storage(addr);
-        let _ = Test.log(s2.result_nat);
-        let _ = assert (s2.result_nat != (None() as option<nat>));
+        Test.log(s2.result_nat);
+        assert (s2.result_nat != (None() as option<nat>));
         let result : nat =Option.unopt(s2.result_nat);
-        let _ = assert (result <= s2.max);
-        let _ = assert (result >= s2.min);
+        assert (result <= s2.max);
+        assert (result >= s2.min);
         return "OK"
         //Test.log("test finished")
     };
@@ -290,51 +290,51 @@ const test_roll_dices = () : unit => {
         let time_secret2 : nat = 84n;
         let [my_bytes2,bytes_key2] = create_bytes(payload2, time_secret2);
 
-        //let _ = Test.log("bytess created");
+        //Test.log("bytess created");
 
         let x : contract<parameter_of Random> = Test.to_contract(addr);
 
         // alice reset
-        //let _ = Test.log("alice reset");
-        let _ = Test.set_source(alice);
+        //Test.log("alice reset");
+        Test.set_source(alice);
         let reset_args : Random.Parameter.Types.reset_param = {min:1n, max:20n};
-        let _ = Test.transfer_to_contract_exn(x, (Reset(reset_args)), 0mutez);
+        Test.transfer_to_contract_exn(x, (Reset(reset_args)), 0mutez);
 
-        //let _ = Test.log("check storage");
+        //Test.log("check storage");
         //let store_reseted : Random.storage = Test.get_storage(addr);
-        //let _ = Test.log(store_reseted);
+        //Test.log(store_reseted);
 
         // alice commits
-        //let _ = Test.log("alice commits");
-        let _ = Test.set_source(alice);
+        //Test.log("alice commits");
+        Test.set_source(alice);
         let commit_args : Random.Parameter.Types.commit_param = {secret_action:my_bytes};
-        let _ = Test.transfer_to_contract_exn(x, (Commit(commit_args)), 10mutez);
+        Test.transfer_to_contract_exn(x, (Commit(commit_args)), 10mutez);
 
         // bob commits
-        //let _ = Test.log("bob commits");
-        let _ = Test.set_source(bob);
+        //Test.log("bob commits");
+        Test.set_source(bob);
         let commit_args2 : Random.Parameter.Types.commit_param = {secret_action:my_bytes2};
-        let _ = Test.transfer_to_contract_exn(x, (Commit(commit_args2)), 10mutez);
+        Test.transfer_to_contract_exn(x, (Commit(commit_args2)), 10mutez);
 
         // alice reveals
-        //let _ = Test.log("alice reveals");
-        let _ = Test.set_source(alice);
+        //Test.log("alice reveals");
+        Test.set_source(alice);
         let reveal_args : Random.Parameter.Types.reveal_param = [bytes_key, time_secret];
-        let _ = Test.transfer_to_contract_exn(x, (Reveal(reveal_args)), 0mutez);
+        Test.transfer_to_contract_exn(x, (Reveal(reveal_args)), 0mutez);
 
         // bob reveals
-        //let _ = Test.log("bob reveals");
-        let _ = Test.set_source(bob);
+        //Test.log("bob reveals");
+        Test.set_source(bob);
         let reveal_args2 : Random.Parameter.Types.reveal_param = [bytes_key2, time_secret2];
-        let _ = Test.transfer_to_contract_exn(x, (Reveal(reveal_args2)), 0mutez);
+        Test.transfer_to_contract_exn(x, (Reveal(reveal_args2)), 0mutez);
 
-        //let _ = Test.log("check storage");
+        //Test.log("check storage");
         let s2 : Random.storage = Test.get_storage(addr);
-        let _ = Test.log(s2.result_nat);
-        let _ = assert (s2.result_nat != (None() as option<nat>));
+        Test.log(s2.result_nat);
+        assert (s2.result_nat != (None() as option<nat>));
         let result : nat = Option.unopt(s2.result_nat);
-        let _ = assert (result <= s2.max);
-        let _ = assert (result >= s2.min);
+        assert (result <= s2.max);
+        assert (result >= s2.min);
         return "OK"
         //Test.log("test finished")
     };
