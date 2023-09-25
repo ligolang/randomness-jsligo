@@ -4,7 +4,6 @@
 
 
 export type storage = Storage.Types.t;
-export type parameter = Parameter.Types.t;
 export type return_ = [list<operation>, storage];
 
 

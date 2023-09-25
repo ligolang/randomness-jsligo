@@ -9,6 +9,4 @@ export namespace Types {
         min : nat,
         max : nat
     };
-
-    export type t = ["Commit", commit_param] | ["Reveal", reveal_param] | ["Reset", reset_param];
-} 
+}
